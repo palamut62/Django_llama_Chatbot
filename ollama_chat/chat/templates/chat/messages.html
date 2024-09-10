@@ -1,0 +1,14 @@
+{% for message in messages %}
+    <div class="message-container {% if message.is_user %}user-message{% else %}ai-message{% endif %}">
+        <div class="message-emoji">
+            {% if message.is_user %}
+                👤
+            {% else %}
+                🤖
+            {% endif %}
+        </div>
+        <div class="message-content">
+            {{ message.content|safe }}
+        </div>
+    </div>
+{% endfor %}

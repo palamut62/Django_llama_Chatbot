@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLAMA 3.1 ChatBot</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <style>
+        body, html {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace;
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+            background-color: #1a1a2e;
+            color: #ffffff;
+        }
+        #sidebar {
+            width: 300px;
+            background-color: #1e2a3a;
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            border-right: 1px solid #2c3e50;
+        }
+        .sidebar-title {
+            color: #ecf0f1;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .sidebar-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .sidebar-button:hover {
+            background-color: #2980b9;
+        }
+        .sidebar-section {
+            margin-top: 20px;
+        }
+        .sidebar-subtitle {
+            color: #bdc3c7;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .sidebar-select {
+            width: 100%;
+            padding: 8px;
+            background-color: #34495e;
+            color: #ecf0f1;
+            border: 1px solid #2c3e50;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .sidebar-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .chat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #34495e;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .chat-item:hover {
+            background-color: #3d566e;
+        }
+        .chat-link {
+            color: #ecf0f1;
+            text-decoration: none;
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .delete-chat {
+            background-color: transparent;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px;
+        }
+        #main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: #1a1a2e;
+        }
+        #chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .message-container {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            max-width: 80%;
+            align-self: flex-start;
+        }
+        .message-emoji {
+            font-size: 24px;
+            margin-right: 10px;
+            min-width: 30px;
+            text-align: center;
+        }
+        .message-content {
+            background-color: #16213e;
+            padding: 15px 20px;
+            border-radius: 20px;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.4;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .user-message .message-content {
+            background-color: #0f3460;
+        }
+        #chat-form {
+            display: flex;
+            padding: 20px;
+            background-color: #1a1a2e;
+        }
+        #user-input {
+            flex-grow: 1;
+            padding: 10px 15px;
+            font-size: 14px;
+            border: 1px solid #34495e;
+            border-radius: 25px;
+            background-color: transparent;
+            color: #ecf0f1;
+        }
+        #chat-form button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-left: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #chat-form button:hover {
+            background-color: #2980b9;
+        }
+        /* Kod blokları için stil */
+        pre {
+            background-color: #2c3e50;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        dialog {
+            border: none;
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            padding: 20px;
+        }
+
+        dialog::backdrop {
+            background-color: rgba(0,0,0,0.6);
+        }
+
+        dialog button {
+            margin: 0 10px;
+            padding: 5px 10px;
+        }
+
+        #confirm-delete {
+            background-color: #e74c3c;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="sidebar">
+            <h2 class="sidebar-title">LLAMA 3.1 Chat</h2>
+            <button id="new-chat" class="sidebar-button"><i class="fas fa-plus"></i> Yeni Sohbet</button>
+            <div class="sidebar-section">
+                <h3 class="sidebar-subtitle">Model Seçin</h3>
+                <select id="model-select" class="sidebar-select">
+                    {% for model in models %}
+                        <option value="{{ model }}">{{ model }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="sidebar-section">
+                <h3 class="sidebar-subtitle">Önceki Sohbetler</h3>
+                <div id="chat-list" class="sidebar-list">
+                    {% for chat in chats %}
+                        <div class="chat-item" id="chat-{{ chat.id }}">
+                            <a href="{% url 'chat_page' %}?chat_id={{ chat.id }}" class="chat-link">{{ chat.summary }}</a>
+                            <button class="delete-chat" data-chat-id="{{ chat.id }}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div id="main-content">
+            <div id="chat-messages">
+                {% for message in messages %}
+                    <div class="message-container {% if message.is_user %}user-message{% else %}ai-message{% endif %}">
+                        <div class="message-emoji">
+                            {% if message.is_user %}
+                                👤
+                            {% else %}
+                                🤖
+                            {% endif %}
+                        </div>
+                        <div class="message-content">
+                            {{ message.content|safe }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <form id="chat-form">
+                {% csrf_token %}
+                <input type="text" id="user-input" placeholder="Mesajınızı yazın...">
+                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <dialog id="delete-dialog">
+        <h3>Sohbeti Sil</h3>
+        <p>Bu sohbeti silmek istediğinizden emin misiniz?</p>
+        <div>
+            <button id="cancel-delete">İptal</button>
+            <button id="confirm-delete">Sil</button>
+        </div>
+    </dialog>
+
+    <script>
+        $(document).ready(function() {
+            let currentChatId = '{{ current_chat_id }}';
+            let chatToDelete = null;
+            const deleteDialog = document.getElementById('delete-dialog');
+
+            function scrollToBottom() {
+                var chatMessages = document.getElementById('chat-messages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function appendMessage(message, isUser) {
+                var messageClass = isUser ? 'user-message' : 'ai-message';
+                var emoji = isUser ? '👤' : '🤖';
+                var messageHtml = `
+                    <div class="message-container ${messageClass}">
+                        <div class="message-emoji">${emoji}</div>
+                        <div class="message-content">${message}</div>
+                    </div>
+                `;
+                $('#chat-messages').append(messageHtml);
+                Prism.highlightAll();
+                scrollToBottom();
+            }
+
+            $('#chat-form').on('submit', function(e) {
+                e.preventDefault();
+                var userInput = $('#user-input').val();
+                var selectedModel = $('#model-select').val();
+                
+                if (userInput.trim() === '') return;
+
+                appendMessage(userInput, true);
+                $('#user-input').val('');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "chat" %}',
+                    data: {
+                        'message': userInput,
+                        'model': selectedModel,
+                        'chat_id': currentChatId,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            appendMessage(response.message, false);
+                            currentChatId = response.chat_id;
+                            
+                            if (response.summary) {
+                                updateChatSummary(currentChatId, response.summary);
+                            }
+                            
+                            Prism.highlightAll();
+                            scrollToBottom();
+                        } else {
+                            alert('Mesaj gönderilirken bir hata oluştu: ' + response.error);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX error: " + status + ": " + error);
+                        alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                    }
+                });
+            });
+
+            function updateChatSummary(chatId, summary) {
+                var chatItem = $('#chat-' + chatId);
+                if (chatItem.length) {
+                    chatItem.find('a:first').text(summary);
+                } else {
+                    var newChatItem = '<div class="chat-item" id="chat-' + chatId + '">' +
+                                      '<a href="{% url "chat_page" %}?chat_id=' + chatId + '">' + summary + '</a>' +
+                                      '<button class="delete-chat" data-chat-id="' + chatId + '"><i class="fas fa-trash"></i></button>' +
+                                      '</div>';
+                    $('#chat-list').prepend(newChatItem);
+                }
+            }
+
+            $('.chat-item a').on('click', function(e) {
+                e.preventDefault();
+                var chatId = $(this).parent().attr('id').replace('chat-', '');
+                window.location.href = '{% url "chat_page" %}?chat_id=' + chatId;
+            });
+
+            $('.delete-chat').on('click', function(e) {
+                e.preventDefault();
+                chatToDelete = $(this).data('chat-id');
+                deleteDialog.showModal();
+            });
+
+            $('#cancel-delete').on('click', function() {
+                deleteDialog.close();
+            });
+
+            $('#confirm-delete').on('click', function() {
+                if (chatToDelete) {
+                    $.ajax({
+                        url: '{% url "delete_chat" chat_id=0 %}'.replace('0', chatToDelete),
+                        type: 'POST',
+                        data: {
+                            'csrfmiddlewaretoken': '{{ csrf_token }}'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $('#chat-' + chatToDelete).remove();
+                                if (currentChatId === chatToDelete) {
+                                    // Yeni oluşturulan sohbete yönlendir
+                                    window.location.href = '{% url "chat_page" %}?chat_id=' + response.new_chat_id;
+                                } else {
+                                    // Yeni sohbeti chat listesine ekle
+                                    var newChatItem = '<div class="chat-item" id="chat-' + response.new_chat_id + '">' +
+                                                      '<a href="{% url "chat_page" %}?chat_id=' + response.new_chat_id + '">Yeni Sohbet</a>' +
+                                                      '<button class="delete-chat" data-chat-id="' + response.new_chat_id + '"><i class="fas fa-trash"></i></button>' +
+                                                      '</div>';
+                                    $('#chat-list').prepend(newChatItem);
+                                }
+                            } else {
+                                alert('Sohbet silinirken bir hata oluştu: ' + response.error);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("AJAX error: " + status + ": " + error);
+                            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                        }
+                    });
+                }
+                deleteDialog.close();
+            });
+
+            // Yeni sohbet butonu için event listener
+            $('#new-chat').on('click', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '{% url "chat" %}',
+                    type: 'POST',
+                    data: {
+                        'new_chat': true,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.href = '{% url "chat_page" %}?chat_id=' + response.chat_id;
+                        } else {
+                            alert('Yeni sohbet oluşturulurken bir hata oluştu.');
+                        }
+                    }
+                });
+            });
+
+            // Silme butonlarını her zaman görünür yap
+            $('.delete-chat').show();
+
+            // Sayfa yüklendiğinde mevcut mesajları göster
+            if (currentChatId) {
+                $('#chat-messages').html('');
+                {% for message in messages %}
+                    appendMessage('{{ message.content|escapejs }}', {{ message.is_user|yesno:"true,false" }});
+                {% endfor %}
+                scrollToBottom();
+            }
+        });
+    </script>
+</body>
+</html>

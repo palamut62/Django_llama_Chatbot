@@ -1,0 +1,55 @@
+# Python
+*.py[cod]
+__pycache__/
+*.so
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Ortam dosyaları
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE dosyaları
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Statik dosyalar ve medya
+/staticfiles/
+/media/
+
+# Diğer
+*.bak
+*.tmp
+*.temp
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Derleme dosyaları
+*.pyc
+*.pyo
+*.pyd
+
+# Paket dosyaları
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg

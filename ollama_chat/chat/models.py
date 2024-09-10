@@ -1,11 +1,13 @@
 from django.db import models
+import uuid
 
 # Create your models here.
 from django.db import models
 
 class Chat(models.Model):
-    chat_id = models.CharField(max_length=14, unique=True)
-    summary = models.CharField(max_length=255, blank=True, default="No summary")  # Varsayılan değer eklendi
+    id = models.AutoField(primary_key=True)
+    chat_id = models.CharField(max_length=36, unique=True, default=uuid.uuid4, editable=False)
+    summary = models.CharField(max_length=255, blank=True, default="Yeni Sohbet")
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

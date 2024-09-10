@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -8,6 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism-okaidia.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}">
     <style>
         body, html {
             font-family: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace;
@@ -206,7 +208,7 @@
 <body>
     <div class="container">
         <div id="sidebar">
-            <h2 class="sidebar-title">LLAMA 3.1 Chat</h2>
+            <h2 class="sidebar-title">🤖 LLAMA 3.1 Chat</h2>
             <button id="new-chat" class="sidebar-button"><i class="fas fa-plus"></i> Yeni Sohbet</button>
             <div class="sidebar-section">
                 <h3 class="sidebar-subtitle">Model Seçin</h3>
@@ -369,15 +371,8 @@
                             if (response.success) {
                                 $('#chat-' + chatToDelete).remove();
                                 if (currentChatId === chatToDelete) {
-                                    // Yeni oluşturulan sohbete yönlendir
-                                    window.location.href = '{% url "chat_page" %}?chat_id=' + response.new_chat_id;
-                                } else {
-                                    // Yeni sohbeti chat listesine ekle
-                                    var newChatItem = '<div class="chat-item" id="chat-' + response.new_chat_id + '">' +
-                                                      '<a href="{% url "chat_page" %}?chat_id=' + response.new_chat_id + '">Yeni Sohbet</a>' +
-                                                      '<button class="delete-chat" data-chat-id="' + response.new_chat_id + '"><i class="fas fa-trash"></i></button>' +
-                                                      '</div>';
-                                    $('#chat-list').prepend(newChatItem);
+                                    // Eğer mevcut sohbet silindiyse, sayfayı yenile
+                                    window.location.reload();
                                 }
                             } else {
                                 alert('Sohbet silinirken bir hata oluştu: ' + response.error);
@@ -404,10 +399,15 @@
                     },
                     success: function(response) {
                         if (response.success) {
+                            // Yeni sohbete yönlendir
                             window.location.href = '{% url "chat_page" %}?chat_id=' + response.chat_id;
                         } else {
-                            alert('Yeni sohbet oluşturulurken bir hata oluştu.');
+                            alert('Yeni sohbet oluşturulurken bir hata oluştu: ' + response.error);
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX error:", xhr.responseText);
+                        alert('Bir hata oluştu. Lütfen tekrar deneyin.');
                     }
                 });
             });

@@ -46,7 +46,11 @@ def chat_view(request):
     try:
         if request.POST.get('new_chat'):
             new_chat = Chat.objects.create(summary="Yeni Sohbet")
-            return JsonResponse({'success': True, 'chat_id': new_chat.id})
+            return JsonResponse({
+                'success': True, 
+                'chat_id': new_chat.id,
+                'summary': new_chat.summary
+            })
         
         user_message = request.POST.get('message')
         chat_id = request.POST.get('chat_id')
@@ -77,26 +81,23 @@ def chat_view(request):
             'summary': chat.summary
         })
     except Exception as e:
+        import traceback
+        print("Hata:", str(e))
+        print("Traceback:", traceback.format_exc())
         return JsonResponse({'success': False, 'error': str(e)})
 
 def chat_page(request, chat_id=None):
-    chats = Chat.objects.all().order_by('-id')
+    chats = Chat.objects.all().order_by('-timestamp')
     
     if not chat_id:
         chat_id = request.GET.get('chat_id')
     
-    if not chat_id:
-        # Eğer chat_id yoksa ve hiç sohbet yoksa, yeni bir sohbet oluştur
-        if not chats.exists():
-            new_chat = Chat.objects.create(summary="Yeni Sohbet")
-            return redirect('chat_page', chat_id=new_chat.id)
-        else:
-            # Eğer sohbetler varsa, en son sohbete yönlendir
-            return redirect('chat_page', chat_id=chats.first().id)
+    if not chat_id and chats.exists():
+        return redirect('chat_page', chat_id=chats.first().id)
     
     try:
-        current_chat = Chat.objects.get(id=chat_id)
-        messages = current_chat.messages.all().order_by('timestamp')
+        current_chat = Chat.objects.get(id=chat_id) if chat_id else None
+        messages = current_chat.messages.all().order_by('timestamp') if current_chat else []
         messages = [
             {
                 'content': process_message_content(msg.content),
@@ -104,17 +105,17 @@ def chat_page(request, chat_id=None):
             } for msg in messages
         ]
     except Chat.DoesNotExist:
-        # Eğer belirtilen chat_id bulunamazsa, yeni bir sohbet oluştur
-        new_chat = Chat.objects.create(summary="Yeni Sohbet")
-        return redirect('chat_page', chat_id=new_chat.id)
+        current_chat = None
+        messages = []
 
     models = get_models()
     return render(request, 'chat/chat.html', {
         'chats': chats,
         'messages': messages,
         'models': models,
-        'current_chat_id': chat_id
+        'current_chat_id': current_chat.id if current_chat else None
     })
+     
 
 @require_POST
 def delete_chat(request, chat_id):
@@ -122,10 +123,7 @@ def delete_chat(request, chat_id):
         chat = Chat.objects.get(id=chat_id)
         chat.delete()
         
-        # Yeni bir sohbet oluştur
-        new_chat = Chat.objects.create(summary="Yeni Sohbet")
-        
-        return JsonResponse({'success': True, 'new_chat_id': new_chat.id})
+        return JsonResponse({'success': True})
     except Chat.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Sohbet bulunamadı.'})
     except Exception as e:

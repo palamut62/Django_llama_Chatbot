@@ -10,7 +10,7 @@ import re
 from django.utils.html import escape
 from django.views.decorators.csrf import csrf_exempt
 
-client = Groq(api_key="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")
+client = Groq(api_key="key")
 
 def get_models():
     return [model['name'] for model in ollama.list()['models']]

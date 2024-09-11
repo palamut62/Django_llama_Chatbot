@@ -14,18 +14,32 @@
             font-size: 14px;
             margin: 0;
             padding: 0;
-            min-height: 100vh;
+            height: 100%;
             background-color: #1a1a2e;
             color: #ffffff;
+        }
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .content-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 20px; /* Footer'a biraz boşluk bırakmak için */
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         header {
             text-align: center;
-            padding: 40px 0;
+            padding: 20px 0;
         }
         h1 {
             font-size: 36px;
@@ -48,70 +62,130 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-            margin-top: 40px;
+            margin-top: 20px;
         }
         .feature-card {
             background-color: #16213e;
             border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            width: calc(33.33% - 20px);
+            padding: 15px;
+            margin-bottom: 15px;
+            width: calc(33.33% - 15px);
             box-sizing: border-box;
         }
         .feature-card h3 {
-            font-size: 20px;
+            font-size: 18px;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
         }
         .feature-card h3 .emoji {
-            font-size: 24px;
+            font-size: 20px;
             margin-right: 10px;
         }
         .feature-card p {
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        footer {
+            background-color: #1a1a2e; /* Ana sayfa ile aynı arka plan */
+            color: #ffffff;
+            padding: 15px 0;
+            font-size: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1); /* Hafif bir ayırıcı çizgi */
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        .footer-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover {
+            color: #3498db;
+        }
+        .social-icons a {
+            color: #ffffff;
+            font-size: 18px;
+            margin: 0 8px;
+            transition: color 0.3s;
+        }
+        .social-icons a:hover {
+            color: #3498db;
         }
         @media (max-width: 768px) {
             .feature-card {
                 width: 100%;
             }
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .footer-links, .social-icons {
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🤖 OLLAMA Models Chat</h1>
-            <a href="{% url 'chat_page' %}" class="start-chat-btn">Sohbete Başla</a>
-        </header>
+    <div class="page-container">
+        <div class="content-wrap">
+            <div class="container">
+                <header>
+                    <h1>🤖 OLLAMA Models Chat</h1>
+                    <a href="{% url 'chat_page' %}" class="start-chat-btn">Sohbete Başla</a>
+                </header>
 
-        <div class="features">
-            <div class="feature-card">
-                <h3><span class="emoji">🧠</span>Yapay Zeka Destekli Sohbet</h3>
-                <p>LLAMA 3.1 modeli ile güçlendirilmiş yapay zeka asistanımız, sorularınızı yanıtlamak ve çeşitli konularda size yardımcı olmak için hazır.</p>
-            </div>
-            <div class="feature-card">
-                <h3><span class="emoji">💻</span>Kod Örnekleri ve Syntax Highlighting</h3>
-                <p>Programlama ile ilgili sorularınızda, cevaplar syntax highlighting ile birlikte gelir, böylece kod örneklerini daha kolay anlayabilirsiniz.</p>
-            </div>
-            <div class="feature-card">
-                <h3><span class="emoji">📚</span>Sohbet Geçmişi</h3>
-                <p>Önceki sohbetlerinizi kaydeder ve istediğiniz zaman geri dönüp inceleyebilirsiniz. Böylece önemli bilgileri kaybetmezsiniz.</p>
-            </div>
-            <div class="feature-card">
-                <h3><span class="emoji">🔄</span>Çoklu Model Desteği</h3>
-                <p>Farklı OLLAMA modellerini seçerek, ihtiyacınıza en uygun yapay zeka modeliyle sohbet edebilirsiniz.</p>
-            </div>
-            <div class="feature-card">
-                <h3><span class="emoji">👥</span>Kullanıcı Dostu Arayüz</h3>
-                <p>Kolay kullanılabilen ve göz yormayan bir arayüz ile uzun süreli sohbetlerde bile konfor sağlar.</p>
-            </div>
-            <div class="feature-card">
-                <h3><span class="emoji">⚡</span>Hızlı ve Verimli</h3>
-                <p>Optimize edilmiş altyapısı sayesinde hızlı yanıtlar alır, zaman kaybetmeden bilgiye ulaşırsınız.</p>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3><span class="emoji">🧠</span>Yapay Zeka Destekli Sohbet</h3>
+                        <p>LLAMA 3.1 modeli ile güçlendirilmiş yapay zeka asistanımız, sorularınızı yanıtlamak ve çeşitli konularda size yardımcı olmak için hazır.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3><span class="emoji">💻</span>Kod Örnekleri ve Syntax Highlighting</h3>
+                        <p>Programlama ile ilgili sorularınızda, cevaplar syntax highlighting ile birlikte gelir, böylece kod örneklerini daha kolay anlayabilirsiniz.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3><span class="emoji">📚</span>Sohbet Geçmişi</h3>
+                        <p>Önceki sohbetlerinizi kaydeder ve istediğiniz zaman geri dönüp inceleyebilirsiniz. Böylece önemli bilgileri kaybetmezsiniz.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3><span class="emoji">🔄</span>Çoklu Model Desteği</h3>
+                        <p>Farklı OLLAMA modellerini seçerek, ihtiyacınıza en uygun yapay zeka modeliyle sohbet edebilirsiniz.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3><span class="emoji">👥</span>Kullanıcı Dostu Arayüz</h3>
+                        <p>Kolay kullanılabilen ve göz yormayan bir arayüz ile uzun süreli sohbetlerde bile konfor sağlar.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3><span class="emoji">⚡</span>Hızlı ve Verimli</h3>
+                        <p>Optimize edilmiş altyapısı sayesinde hızlı yanıtlar alır, zaman kaybetmeden bilgiye ulaşırsınız.</p>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="{% url 'index' %}">Ana Sayfa</a>
+                    <a href="{% url 'chat_page' %}">Sohbet</a>
+                    <a href="#">İletişim</a>
+                </div>
+                <div class="social-icons">
+                    <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
+                    <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="#" target="_blank"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </footer>
     </div>
 </body>
 </html>

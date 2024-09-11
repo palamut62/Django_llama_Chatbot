@@ -141,3 +141,6 @@ def load_chat(request):
         ]
         return render(request, 'chat/messages.html', {'messages': messages})
     return HttpResponse('')
+
+def index(request):
+    return render(request, 'chat/index.html')

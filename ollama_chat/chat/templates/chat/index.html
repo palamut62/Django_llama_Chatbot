@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLAMA 3.1 ChatBot - Ana Sayfa</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.png' %}">
+    <style>
+        body, html {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace;
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #1a1a2e;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 40px 0;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .start-chat-btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+        .start-chat-btn:hover {
+            background-color: #2980b9;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        .feature-card {
+            background-color: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            width: calc(33.33% - 20px);
+            box-sizing: border-box;
+        }
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .feature-card h3 .emoji {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        .feature-card p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        @media (max-width: 768px) {
+            .feature-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 OLLAMA Models Chat</h1>
+            <a href="{% url 'chat_page' %}" class="start-chat-btn">Sohbete Başla</a>
+        </header>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3><span class="emoji">🧠</span>Yapay Zeka Destekli Sohbet</h3>
+                <p>LLAMA 3.1 modeli ile güçlendirilmiş yapay zeka asistanımız, sorularınızı yanıtlamak ve çeşitli konularda size yardımcı olmak için hazır.</p>
+            </div>
+            <div class="feature-card">
+                <h3><span class="emoji">💻</span>Kod Örnekleri ve Syntax Highlighting</h3>
+                <p>Programlama ile ilgili sorularınızda, cevaplar syntax highlighting ile birlikte gelir, böylece kod örneklerini daha kolay anlayabilirsiniz.</p>
+            </div>
+            <div class="feature-card">
+                <h3><span class="emoji">📚</span>Sohbet Geçmişi</h3>
+                <p>Önceki sohbetlerinizi kaydeder ve istediğiniz zaman geri dönüp inceleyebilirsiniz. Böylece önemli bilgileri kaybetmezsiniz.</p>
+            </div>
+            <div class="feature-card">
+                <h3><span class="emoji">🔄</span>Çoklu Model Desteği</h3>
+                <p>Farklı OLLAMA modellerini seçerek, ihtiyacınıza en uygun yapay zeka modeliyle sohbet edebilirsiniz.</p>
+            </div>
+            <div class="feature-card">
+                <h3><span class="emoji">👥</span>Kullanıcı Dostu Arayüz</h3>
+                <p>Kolay kullanılabilen ve göz yormayan bir arayüz ile uzun süreli sohbetlerde bile konfor sağlar.</p>
+            </div>
+            <div class="feature-card">
+                <h3><span class="emoji">⚡</span>Hızlı ve Verimli</h3>
+                <p>Optimize edilmiş altyapısı sayesinde hızlı yanıtlar alır, zaman kaybetmeden bilgiye ulaşırsınız.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

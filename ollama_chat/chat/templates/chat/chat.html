@@ -246,6 +246,40 @@
         .copy-code-btn:hover {
             opacity: 1;
         }
+
+        .model-info {
+            font-size: 12px;
+            color: #bdc3c7;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        #home-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .home-link {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .home-link:hover {
+            background-color: #2980b9;
+        }
+
+        /* Ana içerik alanına üst boşluk ekleyelim */
+        #chat-messages {
+            padding-top: 50px;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
@@ -254,7 +288,7 @@
 <body>
     <div class="container">
         <div id="sidebar">
-            <h2 class="sidebar-title">🤖 LLAMA 3.1 Chat</h2>
+            <h2 class="sidebar-title">🤖 OLLAMA Models Chat</h2>
             <button id="new-chat" class="sidebar-button"><i class="fas fa-plus"></i> Yeni Sohbet</button>
             <div class="sidebar-section">
                 <h3 class="sidebar-subtitle">Model Seçin</h3>
@@ -277,6 +311,9 @@
             </div>
         </div>
         <div id="main-content">
+            <div id="home-button">
+                <a href="{% url 'index' %}" class="home-link"><i class="fas fa-home"></i> Ana Sayfa</a>
+            </div>
             <div id="chat-messages">
                 {% for message in messages %}
                     <div class="message-container {% if message.is_user %}user-message{% else %}ai-message{% endif %}">
@@ -289,6 +326,9 @@
                         </div>
                         <div class="message-content">
                             {{ message.content|safe }}
+                            {% if not message.is_user %}
+                                <div class="model-info">Model: {{ message.model }}</div>
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}
@@ -321,13 +361,17 @@
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
 
-            function appendMessage(message, isUser) {
+            function appendMessage(message, isUser, model = null) {
                 var messageClass = isUser ? 'user-message' : 'ai-message';
                 var emoji = isUser ? '👤' : '🤖';
+                var modelInfo = isUser ? '' : `<div class="model-info">Model: ${model}</div>`;
                 var messageHtml = `
                     <div class="message-container ${messageClass}">
                         <div class="message-emoji">${emoji}</div>
-                        <div class="message-content">${wrapCodeBlocks(message)}</div>
+                        <div class="message-content">
+                            ${wrapCodeBlocks(message)}
+                            ${modelInfo}
+                        </div>
                     </div>
                 `;
                 $('#chat-messages').append(messageHtml);
@@ -374,7 +418,7 @@
                     },
                     success: function(response) {
                         if (response.success) {
-                            appendMessage(response.message, false);
+                            appendMessage(response.message, false, response.model);
                             currentChatId = response.chat_id;
                             
                             if (response.summary) {
@@ -483,7 +527,7 @@
             if (currentChatId) {
                 $('#chat-messages').html('');
                 {% for message in messages %}
-                    appendMessage('{{ message.content|escapejs }}', {{ message.is_user|yesno:"true,false" }});
+                    appendMessage('{{ message.content|escapejs }}', {{ message.is_user|yesno:"true,false" }}, '{{ message.model|default:"" }}');
                 {% endfor %}
                 scrollToBottom();
             }

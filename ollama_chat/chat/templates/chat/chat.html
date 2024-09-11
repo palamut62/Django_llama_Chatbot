@@ -200,6 +200,27 @@
         #confirm-delete {
             background-color: #e74c3c;
         }
+
+        /* Kaydırma çubuğunu gizlemek için yeni stiller */
+        #chat-messages::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        #chat-messages {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        #sidebar::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        #sidebar {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>

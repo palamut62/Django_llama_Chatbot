@@ -221,6 +221,31 @@
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
+
+        /* Kod bloğu için kapsayıcı stil */
+        .code-block-wrapper {
+            position: relative;
+        }
+
+        /* Kopyalama butonu stili */
+        .copy-code-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 3px 6px;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .copy-code-btn:hover {
+            opacity: 1;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
@@ -302,12 +327,30 @@
                 var messageHtml = `
                     <div class="message-container ${messageClass}">
                         <div class="message-emoji">${emoji}</div>
-                        <div class="message-content">${message}</div>
+                        <div class="message-content">${wrapCodeBlocks(message)}</div>
                     </div>
                 `;
                 $('#chat-messages').append(messageHtml);
                 Prism.highlightAll();
+                addCopyButtons();
                 scrollToBottom();
+            }
+
+            function wrapCodeBlocks(message) {
+                return message.replace(/<pre><code class="language-(\w+)">([\s\S]*?)<\/code><\/pre>/g, 
+                    '<div class="code-block-wrapper"><pre><code class="language-$1">$2</code></pre><button class="copy-code-btn">Kopyala</button></div>');
+            }
+
+            function addCopyButtons() {
+                $('.copy-code-btn').off('click').on('click', function() {
+                    var codeBlock = $(this).siblings('pre').find('code');
+                    var codeText = codeBlock.text();
+                    navigator.clipboard.writeText(codeText).then(function() {
+                        alert('Kod kopyalandı!');
+                    }, function(err) {
+                        console.error('Kopyalama başarısız oldu: ', err);
+                    });
+                });
             }
 
             $('#chat-form').on('submit', function(e) {
